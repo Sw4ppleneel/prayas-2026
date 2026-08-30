@@ -22,27 +22,6 @@ a:hover{color:#ed990f}
 </style>
 </helmet>
 
-<div style="position:fixed;inset:0;pointer-events:none;z-index:60;opacity:{{ hudOpacity }};font-family:Rajdhani,sans-serif;font-weight:600">
-  <div style="position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(255,46,159,0),rgba(255,46,159,.45),rgba(255,46,159,0))"></div>
-  <div style="position:absolute;left:22px;top:16px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.24em;color:#9a9aa5">
-    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ff2e9f;box-shadow:0 0 12px rgba(255,46,159,.9)"></span>
-    <span>PRAYAS &rsquo;26 &nbsp;/&nbsp; SCROLL WIREFRAME &nbsp;/&nbsp; V2</span>
-  </div>
-  <div style="position:absolute;right:22px;top:14px;display:flex;flex-direction:column;align-items:flex-end;gap:5px;font-size:11px;letter-spacing:.16em;color:#9a9aa5">
-    <span>ACT 1 &nbsp;{{ pctLabel }}&nbsp;&nbsp;&middot;&nbsp;&nbsp;{{ timeLabel }}</span>
-    <span style="color:#ed990f">{{ phaseLabel }}</span>
-    <div style="width:190px;height:2px;background:rgba(245,245,247,.12)">
-      <div style="height:2px;background:#ff2e9f;box-shadow:0 0 10px rgba(255,46,159,.8);width:{{ pctLabel }}"></div>
-    </div>
-  </div>
-  <div style="position:absolute;left:22px;bottom:18px;max-width:300px;font-family:Inter,sans-serif;font-weight:400;font-size:10.5px;line-height:1.8;letter-spacing:.03em;color:#9a9aa5">
-    <div style="display:flex;gap:10px;font-family:Rajdhani,sans-serif;font-weight:600;letter-spacing:.2em;color:#9a9aa5"><span>[ WIREFRAME NOTES ]</span><span style="color:#ff2e9f">{{ armCountLabel }}</span></div>
-    <div>&mdash; paper-cutout dancer stands in for the halftone artwork</div>
-    <div>&mdash; particle field stands in for the Lottie / Rive dust</div>
-    <div>&mdash; copy inside dashed boxes is TBC</div>
-  </div>
-</div>
-
 <div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background-color:#0a0a0f;background-image:repeating-linear-gradient(45deg,rgba(20,189,168,.05) 0 1px,rgba(10,10,15,0) 1px 22px),repeating-linear-gradient(-45deg,rgba(255,46,159,.045) 0 1px,rgba(10,10,15,0) 1px 22px),radial-gradient(130% 85% at 50% -10%,rgba(70,52,84,.55),rgba(10,10,15,0) 62%),radial-gradient(90% 60% at 50% 108%,rgba(186,18,90,.3),rgba(10,10,15,0) 60%)">
   <div style="position:absolute;left:50%;top:42%;width:180vmax;height:180vmax;transform:translate(-50%,-50%) rotate({{ mandalaRotate }});background-image:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,46,159,.075) 0deg 1.4deg,rgba(10,10,15,0) 1.4deg 9deg),repeating-radial-gradient(circle at 50% 50%,rgba(237,153,15,.075) 0 1px,rgba(10,10,15,0) 1px 74px),repeating-radial-gradient(circle at 50% 50%,rgba(20,189,168,.055) 0 1px,rgba(10,10,15,0) 1px 222px);mask-image:radial-gradient(circle at 50% 50%,#000 8%,rgba(0,0,0,.55) 34%,transparent 62%);-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 8%,rgba(0,0,0,.55) 34%,transparent 62%)"></div>
   <div style="position:absolute;left:50%;top:42%;width:120vmax;height:120vmax;transform:translate(-50%,-50%) rotate({{ mandalaCounterRotate }});background-image:repeating-conic-gradient(from 6deg at 50% 50%,rgba(237,153,15,.06) 0deg .8deg,rgba(10,10,15,0) .8deg 22.5deg);mask-image:radial-gradient(circle at 50% 50%,transparent 14%,rgba(0,0,0,.8) 32%,transparent 55%);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 14%,rgba(0,0,0,.8) 32%,transparent 55%)"></div>
