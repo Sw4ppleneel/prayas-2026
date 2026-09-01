@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<!--
+  Card frame, drawn in the language of the Insta banner's side panels:
+  a marigold outer rule, a hairline inset, cusped corner finials and small
+  teal vine ticks. Authored as a border-image source so one drawing serves
+  both the portrait event cards and the wide hackathon boxes — the corners
+  stay pristine and only the straight runs tile.
+
+  The corner and edge motifs are drawn once for the top-left / top and then
+  rotated about the centre, so all four sides stay identical.
+
+  The chalk filter is the banner's own texture: fractal noise displacing the
+  strokes, which is what gives the linework its hand-drawn edge.
+-->
+<defs>
+  <filter id="chalk" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.5 0.5" numOctaves="3" seed="6211" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+
+  <!-- top-left corner: cusped finial on the rule, vine stepping inward -->
+  <g id="cor">
+    <path d="M30 9 Q9 9 9 30" stroke="#C66A13" stroke-width="7"/>
+    <path d="M42 26 Q26 26 26 42" stroke="#C66A13" stroke-width="2.4" stroke-opacity=".55"/>
+    <path d="M17.5 6.5 l7 11 -7 11 -7-11 z" fill="#C66A13" stroke="none"/>
+    <circle cx="45" cy="45" r="3.4" fill="#0C9D81" stroke="none"/>
+    <circle cx="57" cy="57" r="2.2" fill="#0C9D81" stroke="none" opacity=".8"/>
+    <circle cx="67" cy="67" r="1.4" fill="#0C9D81" stroke="none" opacity=".55"/>
+  </g>
+
+  <!-- Top edge midpoint. Deliberately spare: on the banner the long runs of
+       the side panels are plain double rule and all the ornament sits at the
+       ends, so this is one small bud on the rule and nothing else. It is the
+       only thing that repeats — border-image tiles the straight runs — so
+       anything busier turns into a dotted line at card width. -->
+  <g id="edge">
+    <path d="M200 4 l5 8 -5 8 -5-8 z" fill="#C66A13" stroke="none" opacity=".78"/>
+  </g>
+</defs>
+
+<g filter="url(#chalk)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- the two rules. Corner radii are large enough that the cusps sit on a
+       curve rather than a hard right angle, as they do on the banner. -->
+  <rect x="9"  y="9"  width="382" height="382" rx="22" stroke="#C66A13" stroke-width="7"/>
+  <rect x="26" y="26" width="348" height="348" rx="13" stroke="#C66A13" stroke-width="2.4" stroke-opacity=".55"/>
+
+  <use href="#cor"/>
+  <use href="#cor" transform="rotate(90 200 200)"/>
+  <use href="#cor" transform="rotate(180 200 200)"/>
+  <use href="#cor" transform="rotate(270 200 200)"/>
+
+  <use href="#edge"/>
+  <use href="#edge" transform="rotate(90 200 200)"/>
+  <use href="#edge" transform="rotate(180 200 200)"/>
+  <use href="#edge" transform="rotate(270 200 200)"/>
+</g>
+</svg>
