@@ -54,8 +54,32 @@
     // is 3x that, so 3 x 3.6 = 10.8vh of run => actVh 1180. Change this one
     // value and nothing else: every beat below is normalised, so the dance
     // and both cards keep their exact proportions.
+    // Set at boot and on every resize by applyPace() from `pace` below —
+    // a phone needs a much shorter run than a desktop for the same act.
     actVh: 1180,
     holdVh: 0,
+
+    // ---- pacing per device -----------------------------------------------
+    // 1080vh of run (actVh 1180) is right for a wheel or a trackpad, where
+    // one gesture covers a lot of ground. A thumb does not: the same act on
+    // a phone took swipe after swipe to get through, which read as the page
+    // being stuck rather than as a slow reveal.
+    //
+    // Every beat is normalised to progress, so shortening the run keeps the
+    // dance and both cards in exactly the same proportions — they simply
+    // arrive sooner. At the phone value card one still holds the stage for
+    // ~46vh of scrolling and is on screen for ~138vh of it, which is enough
+    // to read it without it outstaying its welcome.
+    //
+    // `tau` drops alongside: a shorter run means more change per pixel, and
+    // the desktop follow starts to feel like lag behind a finger that is
+    // already somewhere else. Tighter tracking reads as smoother here even
+    // though it is technically less smoothing.
+    pace: {
+      phone:   { actVh: 560,  tau: 0.12 },
+      tablet:  { actVh: 820,  tau: 0.15 },
+      desktop: { actVh: 1180, tau: 0.1875 }
+    },
 
     // Degrees the backdrop turns across the whole act.
     rotation: 54,
@@ -183,6 +207,21 @@
   var loopFallback = false;
   var scrubbingIsDead = false;         // set only by a FATAL fallback
 
+  /* A seek that COMPLETES can still be far too slow to read as dancing. A
+     phone decoding an alpha stream in software retires a seek in a couple of
+     hundred milliseconds, which is four or five new frames a second: she
+     visibly stutters instead of moving, and none of the checks below fire
+     because every seek is technically working. So time them and give up on
+     scrubbing if the decoder cannot keep pace.
+
+     The first few are ignored — a cold decoder and a half-filled buffer make
+     the opening seeks slow everywhere, including on desktop. */
+  var SEEK_WARMUP  = 3;      // seeks to discard before judging
+  var SEEK_SAMPLES = 6;      // seeks to average over
+  var SEEK_BUDGET  = 200;    // ms; above this, scrubbing reads as a stutter
+  var seekSeen = 0;
+  var seekTotal = 0;
+
   function startLoopFallback(why, fatal) {
     if (!video || scrubbingIsDead) return;
     if (fatal) scrubbingIsDead = true;
@@ -225,6 +264,27 @@
     } else {
       try { video.pause(); } catch (e) {}
     }
+  }
+
+  /* iOS and Safari refuse to seek a <video> that has never been kicked, and
+     the kick has to ride on a user gesture — so this cannot wait for the
+     alpha probe to finish. On a phone the first touch usually lands inside
+     the first second, which is often BEFORE the probe has settled, and a
+     `once` listener attached afterwards has already missed it. That is what
+     left her frozen on the poster: never primed, so every seek was quietly
+     ignored, and the plate simply never moved.
+
+     Wire it at parse time instead and remember that a gesture went by, so
+     whichever happens second — the gesture or the probe — does the priming. */
+  var gestureSeen = false;
+
+  if (video) {
+    ["pointerdown", "touchstart", "wheel", "keydown"].forEach(function (ev) {
+      window.addEventListener(ev, function () {
+        gestureSeen = true;
+        if (video.src) primeVideo();
+      }, { once: true, passive: true });
+    });
   }
 
   /* -- which plate can this browser actually composite? -----------------------
@@ -339,13 +399,29 @@
     video.addEventListener("loadedmetadata", armVideo);
     video.addEventListener("durationchange", armVideo);
     video.addEventListener("canplay", armVideo);
-    video.addEventListener("seeked", function () { seeking = false; });
+    video.addEventListener("seeked", function () {
+      if (seeking) {
+        seekSeen++;
+        if (seekSeen > SEEK_WARMUP) {
+          seekTotal += performance.now() - seekIssuedAt;
+          var judged = seekSeen - SEEK_WARMUP;
+          if (judged >= SEEK_SAMPLES) {
+            var mean = seekTotal / judged;
+            if (mean > SEEK_BUDGET) {
+              startLoopFallback("seeks average " + Math.round(mean) +
+                                "ms — too slow to read as motion", true);
+            }
+            seekSeen = SEEK_WARMUP;      // reset the window and keep watching
+            seekTotal = 0;
+          }
+        }
+      }
+      seeking = false;
+    });
     video.addEventListener("error", function () { startLoopFallback("load error", true); });
 
     primeVideo();
-    ["pointerdown", "touchstart", "wheel", "keydown"].forEach(function (ev) {
-      window.addEventListener(ev, primeVideo, { once: true, passive: true });
-    });
+    if (gestureSeen) primeVideo();      // a gesture already went by; use it
 
     /* Metadata that has NOT ARRIVED YET is not metadata that will never
        arrive. Poll instead of setting one blind timer: give up early only if
@@ -451,6 +527,20 @@
     }
 
     weave.innerHTML = html;
+  }
+
+  /* Which pacing this viewport gets. Read on every resize, not just at boot,
+     so turning a tablet from portrait to landscape re-paces the act instead
+     of keeping whatever it booted with. */
+  var phoneQ  = window.matchMedia("(max-width: 760px)");
+  var tabletQ = window.matchMedia("(max-width: 1024px) and (pointer: coarse)");
+
+  function applyPace() {
+    var p = phoneQ.matches  ? CONFIG.pace.phone
+          : tabletQ.matches ? CONFIG.pace.tablet
+          :                   CONFIG.pace.desktop;
+    CONFIG.actVh = p.actVh;
+    CONFIG.tau = p.tau;
   }
 
   /** Size the act: the progress run plus the end hold, both in viewport
@@ -632,6 +722,7 @@
     resizeTimer = setTimeout(function () {
       buildWeave();
       if (reduceMotion.matches) return;   // CSS owns the layout in that mode
+      applyPace();
       sizeAct();
       lastWritten = null;
     }, 120);
@@ -646,6 +737,7 @@
     window.addEventListener("resize", onResize, { passive: true });
 
     if (reduceMotion.matches) { startStatic(); return; }
+    applyPace();
     sizeAct();
     smoothed = window.scrollY || 0;
     render(clamp01((smoothed - act.offsetTop) / progressSpan()));

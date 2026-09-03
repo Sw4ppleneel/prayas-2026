@@ -235,9 +235,12 @@ main { position: relative; z-index: 1; }
 
 .act {
   position: relative;
-  /* Fallback only. The engine replaces this with a pixel height computed from
-     CONFIG.actVh + CONFIG.holdVh; retune the pacing there, not here. */
-  height: 1180vh;
+  /* Fallback only, and deliberately the shortest of the three: the engine
+     replaces this with a pixel height computed from CONFIG.actVh (which is
+     now per-device — see CONFIG.pace) plus CONFIG.holdVh. Retune the pacing
+     there, not here. Erring short means the pre-JS frame cannot leave a
+     phone staring at nine screens of empty track if the script is slow. */
+  height: 560vh;
 }
 
 .act__stage {
