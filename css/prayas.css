@@ -454,7 +454,7 @@ main { position: relative; z-index: 1; }
   /* Thickness of the ornament band. The source plate is 139px of border on a
      956px-wide artwork — 14.5% — so keeping the rendered band near that ratio
      is what stops the linework looking stretched. */
-  --band: clamp(24px, 3.4vw, 54px);
+  --band: clamp(15px, 2.1vw, 30px);
 }
 .card--one { left: 4vw;  --card-o: var(--e1-o); --card-x: var(--e1-x); --accent: var(--crimson); }
 .card--two { right: 4vw; --card-o: var(--e2-o); --card-x: var(--e2-x); --accent: var(--brick); }
@@ -462,24 +462,28 @@ main { position: relative; z-index: 1; }
 /* -- the ornamental plate ---------------------------------------------------
    Every surface on this page that reads as printed stock uses this one rule:
    the two event cards and the boxes in the hackathon section. The border is
-   an illustrated Pattachitra frame applied with border-image, so the four
-   corners stay pristine (border-image never stretches a corner) while the
-   vine tiles along the edges.
+   assets/card-frame.svg — the marigold rule, hairline inset, cusped corner
+   finials and teal vine ticks taken from the Insta banner's side panels —
+   applied with border-image, so the four corners stay pristine (border-image
+   never stretches a corner) while the straight runs tile along the edges.
 
-   --band is the only thing that varies. The source plate is 139px of border
-   on 956px of artwork — 14.5% — so a small box needs a proportionally thinner
-   band, otherwise the vine eats the content. Each component sets its own. */
+   --band is the only thing that varies, and each component sets its own: the
+   frame is line art rather than a dense illustrated plate, so it holds up far
+   thinner than the old one did. */
 .card__frame,
 .panel,
 .track,
 .mentor {
   position: relative;
   border-style: solid;
-  border-image-source: url("../assets/card-frame.webp");
-  /* source slices in source pixels: top right bottom left */
-  border-image-slice: 168 139 148 139;
+  border-image-source: url("../assets/card-frame.svg");
+  /* Slices in the source's own units: the drawing is 400 square with a
+     64-unit border, so one number does all four sides. The old Pattachitra
+     plate needed an uneven slice because its artwork was uneven; this one is
+     symmetrical by construction, which is also why the band is uniform. */
+  border-image-slice: 64;
   border-image-repeat: round;
-  border-width: calc(var(--band) * 1.21) var(--band) calc(var(--band) * 1.07) var(--band);
+  border-width: var(--band);
 
   background-color: var(--paper);
   /* faint press texture so the interior is stock, not flat fill */
@@ -772,7 +776,7 @@ main { position: relative; z-index: 1; }
 .grid--four  { grid-template-columns: repeat(4, 1fr); }
 
 .panel {
-  --band: clamp(15px, 1.9vw, 26px);
+  --band: clamp(12px, 1.5vw, 20px);
   /* The band already insets the content; this is only the breathing room
      between the vine and the type. */
   padding: clamp(.5rem, 1.3vw, 1rem) clamp(.7rem, 1.6vw, 1.2rem);
@@ -791,7 +795,7 @@ main { position: relative; z-index: 1; }
 /* -- tracks: genuinely sealed until day one -------------------------------- */
 
 .track {
-  --band: clamp(12px, 1.4vw, 19px);
+  --band: clamp(10px, 1.2vw, 16px);
   display: flex;
   flex-direction: column;
   gap: .55rem;
@@ -823,7 +827,7 @@ main { position: relative; z-index: 1; }
 .mentor {
   /* The shortest plates on the page — two lines of type. A band sized like
      the others would take nearly half their height, so these run thinner. */
-  --band: clamp(10px, 1.15vw, 16px);
+  --band: clamp(9px, 1vw, 14px);
   padding: clamp(.7rem, 1.5vw, 1.1rem) clamp(.8rem, 1.7vw, 1.3rem);
 }
 .mentor h4 {
@@ -901,7 +905,7 @@ main { position: relative; z-index: 1; }
   .card .btn { pointer-events: auto; }
 
   /* A thinner band keeps the interior usable once the card goes full-bleed. */
-  .card { --band: clamp(17px, 6.4vw, 34px); }
+  .card { --band: clamp(12px, 4vw, 22px); }
 
   .hero__logo { width: min(58vw, 300px); }
   .dancer__plate { width: min(100%, 78vw); }
@@ -923,7 +927,7 @@ main { position: relative; z-index: 1; }
 }
 
 @media (max-width: 420px) {
-  .card { --band: clamp(15px, 5.6vw, 26px); }
+  .card { --band: clamp(11px, 3.6vw, 18px); }
   .rounds__desc { display: none; }
 }
 
@@ -934,7 +938,7 @@ main { position: relative; z-index: 1; }
 @media (max-height: 620px) and (min-width: 761px) {
   .card {
     width: min(26vw, 300px);
-    --band: clamp(16px, 2.2vw, 30px);
+    --band: clamp(11px, 1.5vw, 20px);
   }
   .rounds,
   .card__hook { display: none; }
